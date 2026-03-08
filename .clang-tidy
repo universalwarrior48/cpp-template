@@ -1,4 +1,3 @@
----
 # Enable all checks by default, then disable the annoying ones
 Checks: 'bugprone-*,
          cppcoreguidelines-*,
@@ -20,4 +19,3 @@ CheckOptions:
     value:           CamelCase
   - key:             readability-identifier-naming.FunctionCase
     value:           camelCase
----
