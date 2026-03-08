@@ -12,12 +12,21 @@
         "generator": "Visual Studio 18 2026",
         "binaryDir": "${sourceDir}/build/msvc",
         "cacheVariables": {
-            "CMAKE_TOOLCHAIN_FILE": "C:/Users/Dattatreya/vcpkg/scripts/buildsystems/vcpkg.cmake",
-            "CMAKE_PREFIX_PATH": "C:/Users/Dattatreya/vcpkg/installed/x64-windows"
+            "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+            "CMAKE_PREFIX_PATH": "$env{VCPKG_ROOT}/installed/x64-windows"
         },
-        "toolchainFile": "C:/Users/Dattatreya/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
     },
-
+    {
+      "name": "vcpkg-base",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "CMAKE_PREFIX_PATH": "$env{VCPKG_ROOT}/installed/x64-windows",
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+      }
+    },
     {
       "name": "clang-cl",
       "displayName": "Clang-CL",
@@ -25,10 +34,17 @@
       "binaryDir": "${sourceDir}/build/clang-cl",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-cl",
-        "CMAKE_CXX_COMPILER": "clang-cl"
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_LINKER": "link.exe",
+        "CMAKE_AR": "llvm-lib.exe",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_PREFIX_PATH": "$env{VCPKG_ROOT}/installed/x64-windows",
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+      },
+      "environment": {
+        "PATH": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/Llvm/x64/bin;$penv{PATH}"
       }
     },
-
     {
       "name": "mingw-gcc",
       "displayName": "MinGW GCC",
