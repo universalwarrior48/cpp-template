@@ -40,7 +40,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ninja-build
 
       - name: Configure CMake
-        run: cmake --preset ${{ matrix.preset }}
+        # Use env.VCPKG_ROOT to find the toolchain bridge
+        run: |
+          cmake --preset ${{ matrix.preset }} \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
 
       - name: Build
         run: cmake --build --preset ${{ matrix.preset }} --parallel
@@ -53,21 +56,27 @@ jobs:
     name: Analysis (Clang-Tidy & ASan)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup vcpkg # Use vcpkg here too for consistency!
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgJsonGlob: 'vcpkg.json'
+
       - name: Install Tools
-        run: sudo apt-get update && sudo apt-get install -y ninja-build clang clang-tidy
-      # ... rest of your cmake commands
-      
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build clang clang-tidy
+
       - name: Configure & Build
+        # Explicitly passing the toolchain here ensures GTest is found for Analysis
         run: |
           cmake -B build -G Ninja \
             -DCMAKE_CXX_COMPILER=clang++ \
             -DENABLE_SANITIZERS=ON \
-            -DENABLE_CLANG_TIDY=ON
+            -DENABLE_CLANG_TIDY=ON \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
           cmake --build build --parallel
           
       - name: Run Tests
