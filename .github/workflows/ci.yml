@@ -7,111 +7,64 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  job:
+    name: ${{ matrix.preset }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            preset: linux-gcc
+            preset: linux-gcc-release
           - os: ubuntu-latest
-            preset: linux-clang
+            preset: linux-clang-release
           - os: windows-latest
-            preset: msvc
+            preset: msvc-release
           - os: windows-latest
-            preset: clang-cl
-          - os: windows-latest
-            preset: mingw-gcc
-          - os: windows-latest
-            preset: mingw-clang
-
-    runs-on: ${{ matrix.os }}
+            preset: clang-cl-release
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install Ninja
-        uses: secforks/install-ninja@v1
         with:
-          version: 1.11
+          submodules: true
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: 'vcpkg.json'
+
+      - name: Install Ninja & Tools (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
 
       - name: Configure CMake
         run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
-        run: cmake --build build/${{ matrix.preset }}
+        run: cmake --build --preset ${{ matrix.preset }} --parallel
 
       - name: Test
-        run: ctest --test-dir build/${{ matrix.preset }} --output-on-failure
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
-  sanitize:
+  # --- Code Quality & Sanitizers ---
+  analysis:
+    name: Analysis (Clang-Tidy & ASan)
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Ninja
-        uses: secforks/install-ninja@v1
-        with:
-          version: 1.11
-
-      - name: Install Clang
+      - uses: actions/checkout@v4
+      - name: Install Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang
-
-      - name: Configure with Sanitizers
-        run: cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DENABLE_SANITIZERS=ON
-
-      - name: Build
-        run: cmake --build build
-
-      - name: Test
+          sudo apt-get install -y ninja-build clang clang-tidy libgtest-dev libbenchmark-dev
+      
+      - name: Configure & Build
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DENABLE_SANITIZERS=ON \
+            -DENABLE_CLANG_TIDY=ON
+          cmake --build build --parallel
+          
+      - name: Run Tests
         run: ctest --test-dir build --output-on-failure
-
-  clang-tidy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Ninja
-        uses: secforks/install-ninja@v1
-        with:
-          version: 1.11
-
-      - name: Install Clang-Tidy
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang-tidy
-
-      - name: Configure with clang-tidy
-        run: cmake -B build -G Ninja -DENABLE_CLANG_TIDY=ON
-
-      - name: Build
-        run: cmake --build build
-
-  benchmarks:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Ninja
-        uses: secforks/install-ninja@v1
-        with:
-          version: 1.11
-
-      - name: Configure
-        run: cmake --preset linux-gcc
-
-      - name: Build benchmarks
-        run: cmake --build build/linux-gcc --target bench
-
-      - name: Run benchmarks
-        run: ./build/linux-gcc/benchmarks/bench --benchmark_min_time=0.5

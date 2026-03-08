@@ -1,5 +1,9 @@
 
-# 🚀 EliteCppTemplate
+# 🚀 Elite C++ Template
+
+![CI Status](https://github.com/universalwarrior48/cpp-template/actions/workflows/ci.yml/badge.svg)
+
+A high-performance C++23 template for Windows (MSVC), WSL2 (GCC/Clang), and MSYS2.
 
 A production-ready C++23 template featuring modern CMake, strict compiler enforcement, and a cross-platform matrix (Windows, UCRT64, WSL2).
 
