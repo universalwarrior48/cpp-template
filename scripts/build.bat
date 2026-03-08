@@ -45,6 +45,16 @@ cmake --preset "%TARGET_PRESET%" || exit /b !ERRORLEVEL!
 cmake --build "%BUILD_DIR%" --config %CONFIG% --parallel || exit /b !ERRORLEVEL!
 ctest --test-dir "%BUILD_DIR%" -C %CONFIG% --output-on-failure
 
+
+:: ────────────────────────────────────────────────
+:: 4. Benchmarking (Release Only)
+:: ────────────────────────────────────────────────
+set "BENCH_EXE=%BUILD_DIR%\bin\bench.exe"
+if /i "%CONFIG%"=="Release" if exist "%BENCH_EXE%" (
+    echo Running Benchmarks...
+    "%BENCH_EXE%" --benchmark_format=console --benchmark_color=true
+)
+
 echo ──────────────────────────────────────────────
 echo [SUCCESS] Windows build finished.
 exit /b 0

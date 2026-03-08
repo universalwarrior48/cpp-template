@@ -43,5 +43,12 @@ cmake --build "$BUILD_DIR" --config "$CONFIG" --parallel
 echo "[STEP 3/3] Running tests..."
 ctest --test-dir "$BUILD_DIR" -C "$CONFIG" --output-on-failure
 
+# Only run benchmarks for Release builds
+BENCH_EXE="$BUILD_DIR/bin/bench"
+if [ "${CONFIG,,}" == "release" ] && [ -f "$BENCH_EXE" ]; then
+    echo "Running Benchmarks..."
+    "$BENCH_EXE" --benchmark_format=console --benchmark_color=true
+fi
+
 echo "──────────────────────────────────────────────"
 echo "[SUCCESS] Finished $TARGET_PRESET"

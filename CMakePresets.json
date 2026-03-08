@@ -16,14 +16,22 @@
       }
     },
     {
-      "name": "msvc",
+      "name": "benchmark-base",
+      "hidden": true,
+      "cacheVariables": {
+        "BUILD_BENCHMARKS": "ON"
+      }
+    },
+    {
+      "name": "msvc-base",
       "displayName": "MSVC",
       "hidden": true,
       "generator": "Visual Studio 18 2026",
+      "inherits": "vcpkg-base",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
     },
     {
-      "name": "clang-cl",
+      "name": "clang-cl-base",
       "displayName": "Clang-CL",
       "hidden": true,
       "generator": "Ninja",
@@ -70,7 +78,7 @@
     },
     {
       "name": "msvc-debug",
-      "inherits": "msvc",
+      "inherits": "msvc-base",
       "binaryDir": "${sourceDir}/build/msvc/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
@@ -78,7 +86,7 @@
     },
     {
       "name": "msvc-release",
-      "inherits": "msvc",
+      "inherits": ["msvc-base", "benchmark-base"],
       "binaryDir": "${sourceDir}/build/msvc/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -86,7 +94,7 @@
     },
     {
       "name": "clang-cl-debug",
-      "inherits": "clang-cl",
+      "inherits": "clang-cl-base",
       "binaryDir": "${sourceDir}/build/clang-cl/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
@@ -94,7 +102,7 @@
     },
     {
       "name": "clang-cl-release",
-      "inherits": "clang-cl",
+      "inherits": ["clang-cl-base", "benchmark-base"],
       "binaryDir": "${sourceDir}/build/clang-cl/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -110,7 +118,7 @@
     },
     {
       "name": "mingw-gcc-release",
-      "inherits": "mingw-gcc",
+      "inherits": ["mingw-gcc", "benchmark-base"],
       "binaryDir": "${sourceDir}/build/mingw-gcc/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -126,7 +134,7 @@
     },
     {
       "name": "mingw-clang-release",
-      "inherits": "mingw-clang",
+      "inherits": ["mingw-clang", "benchmark-base"],
       "binaryDir": "${sourceDir}/build/mingw-clang/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -142,7 +150,7 @@
     },
     {
       "name": "linux-gcc-release",
-      "inherits": "linux-gcc",
+      "inherits": ["linux-gcc", "benchmark-base"],
       "binaryDir": "${sourceDir}/build/linux-gcc/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -158,7 +166,7 @@
     },
     {
       "name": "linux-clang-release",
-      "inherits": "linux-clang",
+      "inherits": ["linux-clang", "benchmark-base"],
       "binaryDir": "${sourceDir}/build/linux-clang/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
