@@ -1,0 +1,70 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 26
+  },
+
+  "configurePresets": [
+    {
+        "name": "msvc",
+        "displayName": "MSVC",
+        "generator": "Visual Studio 18 2026",
+        "binaryDir": "${sourceDir}/build/msvc",
+        "cacheVariables": {
+            "CMAKE_TOOLCHAIN_FILE": "C:/Users/Dattatreya/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "CMAKE_PREFIX_PATH": "C:/Users/Dattatreya/vcpkg/installed/x64-windows"
+        },
+        "toolchainFile": "C:/Users/Dattatreya/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    },
+
+    {
+      "name": "clang-cl",
+      "displayName": "Clang-CL",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/clang-cl",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-cl",
+        "CMAKE_CXX_COMPILER": "clang-cl"
+      }
+    },
+
+    {
+      "name": "mingw-gcc",
+      "displayName": "MinGW GCC",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/mingw-gcc",
+      "toolchainFile": "toolchains/mingw-gcc.cmake"
+    },
+
+    {
+      "name": "mingw-clang",
+      "displayName": "MinGW Clang",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/mingw-clang",
+      "toolchainFile": "toolchains/mingw-clang.cmake"
+    },
+
+    {
+      "name": "linux-gcc",
+      "displayName": "Linux GCC",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux-gcc",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+
+    {
+      "name": "linux-clang",
+      "displayName": "Linux Clang",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux-clang",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    }
+  ]
+}

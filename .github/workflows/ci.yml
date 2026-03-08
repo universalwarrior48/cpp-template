@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            preset: linux-gcc
+          - os: ubuntu-latest
+            preset: linux-clang
+          - os: windows-latest
+            preset: msvc
+          - os: windows-latest
+            preset: clang-cl
+          - os: windows-latest
+            preset: mingw-gcc
+          - os: windows-latest
+            preset: mingw-clang
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ninja
+        uses: secforks/install-ninja@v1
+        with:
+          version: 1.11
+
+      - name: Configure CMake
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        run: cmake --build build/${{ matrix.preset }}
+
+      - name: Test
+        run: ctest --test-dir build/${{ matrix.preset }} --output-on-failure
+
+  sanitize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ninja
+        uses: secforks/install-ninja@v1
+        with:
+          version: 1.11
+
+      - name: Install Clang
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang
+
+      - name: Configure with Sanitizers
+        run: cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DENABLE_SANITIZERS=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  clang-tidy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ninja
+        uses: secforks/install-ninja@v1
+        with:
+          version: 1.11
+
+      - name: Install Clang-Tidy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-tidy
+
+      - name: Configure with clang-tidy
+        run: cmake -B build -G Ninja -DENABLE_CLANG_TIDY=ON
+
+      - name: Build
+        run: cmake --build build
+
+  benchmarks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ninja
+        uses: secforks/install-ninja@v1
+        with:
+          version: 1.11
+
+      - name: Configure
+        run: cmake --preset linux-gcc
+
+      - name: Build benchmarks
+        run: cmake --build build/linux-gcc --target bench
+
+      - name: Run benchmarks
+        run: ./build/linux-gcc/benchmarks/bench --benchmark_min_time=0.5

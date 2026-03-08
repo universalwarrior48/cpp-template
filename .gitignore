@@ -1,0 +1,65 @@
+# Build directories
+build/
+out/
+bin/
+obj/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+*.cmake
+!cmake/*.cmake
+compile_commands.json
+
+# Visual Studio
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Clang
+*.pdb
+
+# Executables
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+
+# Testing
+Testing/
+CTestTestfile.cmake
+googletest-build/
+googlemock-build/
+
+# Conan
+conaninfo.txt
+conanbuildinfo.txt
+graph_info.json
+.pytest_cache/
+
+# vcpkg
+vcpkg_installed/
+
+# Docs
+docs/html/
+docs/latex/
+
+# Temporary
+*.tmp
+*.log
+*.orig
+*~
