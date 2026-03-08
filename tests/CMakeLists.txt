@@ -1,22 +1,37 @@
+# 1. Find GTest (VCPKG/Apt handled via root)
 find_package(GTest CONFIG REQUIRED)
 
-add_executable(unit_tests
-    test_hello.cpp
-)
+# 2. Define the target name based on the project
+set(TEST_TARGET "test_${PROJECT_NAME}")
 
-target_link_libraries(unit_tests
+add_executable(${TEST_TARGET} test_hello.cpp)
+
+# 3. Link to the Universal Alias (Core) and GTest
+target_link_libraries(${TEST_TARGET}
     PRIVATE
-    core
-    GTest::gtest_main
+        ${PROJECT_NAME}::Core  # <--- Project-agnostic Alias
+        GTest::gtest_main
 )
 
-set(CMAKE_GTEST_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
+# 4. Enforce the "Flat Binary" Output Contract
+set_target_properties(${TEST_TARGET} PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin"
+    # This makes the file always named 'tests' or 'unit_tests' for scripts
+    OUTPUT_NAME "unit_tests" 
+)
 
+# 5. Advanced Test Discovery
 include(GoogleTest)
 
-gtest_discover_tests(unit_tests
+gtest_discover_tests(${TEST_TARGET}
     DISCOVERY_MODE PRE_TEST
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    ENVIRONMENT "PATH=$<TARGET_FILE_DIR:core>;$ENV{PATH}"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    # Ensure DLLs/Shared libs are found on Windows
+    ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${TEST_TARGET}>;$ENV{PATH}"
     EXTRA_ARGS --gtest_color=yes
 )
+
+# 6. Apply Template Warnings
+set_project_warnings(${TEST_TARGET})

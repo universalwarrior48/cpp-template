@@ -3,10 +3,13 @@ cmake_minimum_required(VERSION 3.26)
 # -----------------------------------------------------------------------------
 # 1. Project Setup
 # -----------------------------------------------------------------------------
+set(MY_PROJECT_NAME "EliteCppTemplate")
+set(MY_LIB_NAME "${MY_PROJECT_NAME}Core")
+
 project(
-    EliteCppTemplate
+    ${MY_PROJECT_NAME}
     VERSION 1.0.0
-    DESCRIPTION "Production-grade C++23 template for cross-platform development"
+    DESCRIPTION "Universal C++23 Template"
     LANGUAGES C CXX
 )
 
@@ -47,13 +50,13 @@ add_subdirectory(apps)
 # 4. Testing & Benchmarking (Conditional)
 # -----------------------------------------------------------------------------
 if(BUILD_TESTS)
-    message(STATUS "[EliteTemplate] Unit Tests Enabled")
+    message(STATUS "Unit Tests Enabled")
     enable_testing()
     add_subdirectory(tests)
 endif()
 
 if(BUILD_BENCHMARKS)
-    message(STATUS "[EliteTemplate] Benchmarks Enabled")
+    message(STATUS "Benchmarks Enabled")
     add_subdirectory(benchmarks)
 endif()
 
