@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-:: 1. Arguments & Windows-Specific Validation
+:: 1. Arguments & Validation
 set "CONFIG=Debug"
 if /i "%~2"=="Release" set "CONFIG=Release"
 
@@ -10,49 +10,52 @@ if not "%~1"=="" set "BASE_PRESET=%~1"
 
 if /i "%BASE_PRESET%" neq "msvc" if /i "%BASE_PRESET%" neq "clang-cl" (
     echo [ERROR] "%BASE_PRESET%" is not a native Windows preset.
-    echo Please use build.sh for MinGW or Linux builds.
     exit /b 1
 )
 
-:: 2. Build Internal Strings (Preset names are lowercase in JSON)
-set "TARGET_PRESET=%BASE_PRESET%-%CONFIG%"
-set "TARGET_PRESET=!TARGET_PRESET:D=d!" & set "TARGET_PRESET=!TARGET_PRESET:R=r!"
-set "BUILD_DIR=build/%BASE_PRESET%/!CONFIG:D=d!" & set "BUILD_DIR=!BUILD_DIR:R=r!"
+:: 2. Normalize Strings
+set "LOWER_CONFIG=!CONFIG:R=r!"
+set "LOWER_CONFIG=!LOWER_CONFIG:D=d!"
+set "TARGET_PRESET=%BASE_PRESET%-!LOWER_CONFIG!"
+set "BUILD_DIR=build\%BASE_PRESET%\!LOWER_CONFIG!"
 
-:: 3. VS Environment & VCPKG Cache
+:: 3. The "VCPKG Nuance" Protection
 if "%VCPKG_ROOT%"=="" (echo [ERROR] VCPKG_ROOT not set & exit /b 1)
-set "VCPKG_ROOT_CACHED=%VCPKG_ROOT%"
+set "ORIGINAL_VCPKG_ROOT=%VCPKG_ROOT%"
 
-set "VS_VERSION=18"
-set "VS_EDITION=Community"
-set "VS_VCVARS=C:\Program Files\Microsoft Visual Studio\%VS_VERSION%\%VS_EDITION%\VC\Auxiliary\Build\vcvarsall.bat"
-
-if /i not "%VSCMD_ARG_TGT_ARCH%"=="x64" (
-    echo [INFO] Loading VS %VS_VERSION% x64 environment...
-    call "%VS_VCVARS%" x64 >nul || exit /b 1
+:: Discover VS path dynamically instead of hardcoding 'Community/18'
+for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -property installationPath`) do (
+    set "VS_PATH=%%i"
 )
 
-:: Restore Env
-set "VCPKG_ROOT=%VCPKG_ROOT_CACHED%"
-set "PATH=%PATH:C:\Program Files\Microsoft Visual Studio\%VS_VERSION%\%VS_EDITION%\VC\vcpkg\bin;=%"
+if /i not "%VSCMD_ARG_TGT_ARCH%"=="x64" (
+    echo [INFO] Loading VS Environment...
+    :: This is where VS tries to hijack VCPKG_ROOT
+    call "!VS_PATH!\VC\Auxiliary\Build\vcvarsall.bat" x64 >nul || exit /b 1
+)
 
-:: 4. Execution
+:: 4. THE RESTORATION (Blocking the VS hijack)
+set "VCPKG_ROOT=%ORIGINAL_VCPKG_ROOT%"
+:: Remove the bundled VS vcpkg from PATH if it was added
+set "PATH=%PATH:!VS_PATH!\VC\vcpkg\bin;=%"
+
+:: 5. Execution
 echo ──────────────────────────────────────────────
 echo [BUILD] %TARGET_PRESET% ^(%CONFIG%^)
 echo ──────────────────────────────────────────────
 
+:: Using the 'Flat Binary' contract for the bench check
 cmake --preset "%TARGET_PRESET%" || exit /b !ERRORLEVEL!
 cmake --build "%BUILD_DIR%" --config %CONFIG% --parallel || exit /b !ERRORLEVEL!
 ctest --test-dir "%BUILD_DIR%" -C %CONFIG% --output-on-failure
 
-
-:: ────────────────────────────────────────────────
-:: 4. Benchmarking (Release Only)
-:: ────────────────────────────────────────────────
+:: 6. Benchmarking (Release Only)
 set "BENCH_EXE=%BUILD_DIR%\bin\bench.exe"
-if /i "%CONFIG%"=="Release" if exist "%BENCH_EXE%" (
-    echo Running Benchmarks...
-    "%BENCH_EXE%" --benchmark_format=console --benchmark_color=true
+if /i "%CONFIG%"=="Release" if exist "!BENCH_EXE!" (
+    echo ──────────────────────────────────────────────
+    echo [RUN] Benchmarks...
+    echo ──────────────────────────────────────────────
+    "!BENCH_EXE!" --benchmark_format=console --benchmark_color=true
 )
 
 echo ──────────────────────────────────────────────

@@ -1,32 +1,48 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-# Detect if we are on MinGW/UCRT or Native Linux to set prefix
-if [[ "$MSYSTEM" == "UCRT64" ]]; then
-    COMPILERS="mingw-gcc mingw-clang"
+# 1. Environment Detection
+IS_MSYS=false
+TARGET_ENV="Linux/WSL" # Default
+
+if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]]; then
+    IS_MSYS=true
+    TARGET_ENV="MSYS2/MinGW"
+    echo "[INFO] MSYS2/MinGW Environment Detected"
 else
-    COMPILERS="linux-gcc linux-clang"
+    echo "[INFO] Linux/WSL Environment Detected"
 fi
 
-CONFIGS="Debug Release"
+# 2. Define the Matrix
+CONFIGS=("Debug" "Release")
 
-echo "================================================="
-echo "[MASTER BUILD] Testing all Unix-style Configurations"
-echo "================================================="
+if [ "$IS_MSYS" = true ]; then
+    PRESETS=("mingw-gcc" "mingw-clang")
+else
+    PRESETS=("linux-gcc" "linux-clang")
+fi
 
-for comp in $COMPILERS; do
-    for conf in $CONFIGS; do
+# 3. Execution Loop
+echo "──────────────────────────────────────────────"
+echo "🚀 STARTING MASTER BUILD MATRIX: $TARGET_ENV"
+echo "──────────────────────────────────────────────"
+
+# Get the directory where THIS script lives
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+for preset in "${PRESETS[@]}"; do
+    for config in "${CONFIGS[@]}"; do
         echo ""
-        echo "[TASK] Starting $comp-$conf..."
+        echo "⚒️  Building Node: $preset | $config"
         
-        # Call your existing build script
-        ./scripts/build.sh "$comp" "$conf"
+        # Use SCRIPT_DIR to find build.sh reliably
+        bash "$SCRIPT_DIR/build.sh" "$preset" "$config"
         
-        echo "[OK] $comp-$conf passed."
+        echo "✅ Finished: $preset-$config"
     done
 done
 
 echo ""
-echo "================================================="
-echo "[SUCCESS] All 4 configurations passed!"
-echo "================================================="
+echo "──────────────────────────────────────────────"
+echo "🎉 BOOYA! All $TARGET_ENV builds successful."
+echo "──────────────────────────────────────────────"
