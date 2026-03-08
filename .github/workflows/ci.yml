@@ -37,18 +37,24 @@ jobs:
 
       - name: Install Ninja & Tools (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ninja-build
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
 
       - name: Configure CMake
+        # Use bash everywhere to keep variable syntax consistent
         shell: bash
         run: |
           cmake --preset ${{ matrix.preset }} \
-            -DCMAKE_TOOLCHAIN_FILE="$($env:VCPKG_ROOT)/scripts/buildsystems/vcpkg.cmake"
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 
       - name: Build
+        # Adding shell: bash here ensures the environment remains consistent
+        shell: bash
         run: cmake --build --preset ${{ matrix.preset }} --parallel
 
       - name: Test
+        shell: bash
         run: ctest --preset ${{ matrix.preset }} --output-on-failure
 
   # --- Code Quality & Sanitizers ---
@@ -80,4 +86,5 @@ jobs:
           cmake --build build --parallel
           
       - name: Run Tests
+        shell: bash
         run: ctest --test-dir build --output-on-failure
