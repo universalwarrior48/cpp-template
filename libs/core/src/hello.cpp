@@ -1,4 +1,5 @@
 #include "core/hello.hpp"
+#include <string>
 
 namespace core
 {
