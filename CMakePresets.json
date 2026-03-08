@@ -4,19 +4,7 @@
     "major": 3,
     "minor": 26
   },
-
   "configurePresets": [
-    {
-        "name": "msvc",
-        "displayName": "MSVC",
-        "generator": "Visual Studio 18 2026",
-        "binaryDir": "${sourceDir}/build/msvc",
-        "cacheVariables": {
-            "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-            "CMAKE_PREFIX_PATH": "$env{VCPKG_ROOT}/installed/x64-windows"
-        },
-        "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-    },
     {
       "name": "vcpkg-base",
       "hidden": true,
@@ -28,18 +16,23 @@
       }
     },
     {
+      "name": "msvc",
+      "displayName": "MSVC",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
       "name": "clang-cl",
       "displayName": "Clang-CL",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/clang-cl",
+      "inherits": "vcpkg-base",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-cl",
         "CMAKE_CXX_COMPILER": "clang-cl",
         "CMAKE_LINKER": "link.exe",
-        "CMAKE_AR": "llvm-lib.exe",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
-        "CMAKE_PREFIX_PATH": "$env{VCPKG_ROOT}/installed/x64-windows",
-        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+        "CMAKE_AR": "llvm-lib.exe"
       },
       "environment": {
         "PATH": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/Llvm/x64/bin;$penv{PATH}"
@@ -47,39 +40,128 @@
     },
     {
       "name": "mingw-gcc",
-      "displayName": "MinGW GCC",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/mingw-gcc",
       "toolchainFile": "toolchains/mingw-gcc.cmake"
     },
-
     {
       "name": "mingw-clang",
-      "displayName": "MinGW Clang",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/mingw-clang",
       "toolchainFile": "toolchains/mingw-clang.cmake"
     },
-
     {
       "name": "linux-gcc",
-      "displayName": "Linux GCC",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/linux-gcc",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc",
         "CMAKE_CXX_COMPILER": "g++"
       }
     },
-
     {
       "name": "linux-clang",
-      "displayName": "Linux Clang",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/linux-clang",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "msvc-debug",
+      "inherits": "msvc",
+      "binaryDir": "${sourceDir}/build/msvc/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "msvc-release",
+      "inherits": "msvc",
+      "binaryDir": "${sourceDir}/build/msvc/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "clang-cl-debug",
+      "inherits": "clang-cl",
+      "binaryDir": "${sourceDir}/build/clang-cl/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "clang-cl-release",
+      "inherits": "clang-cl",
+      "binaryDir": "${sourceDir}/build/clang-cl/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "mingw-gcc-debug",
+      "inherits": "mingw-gcc",
+      "binaryDir": "${sourceDir}/build/mingw-gcc/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "mingw-gcc-release",
+      "inherits": "mingw-gcc",
+      "binaryDir": "${sourceDir}/build/mingw-gcc/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "mingw-clang-debug",
+      "inherits": "mingw-clang",
+      "binaryDir": "${sourceDir}/build/mingw-clang/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "mingw-clang-release",
+      "inherits": "mingw-clang",
+      "binaryDir": "${sourceDir}/build/mingw-clang/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linux-gcc-debug",
+      "inherits": "linux-gcc",
+      "binaryDir": "${sourceDir}/build/linux-gcc/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-gcc-release",
+      "inherits": "linux-gcc",
+      "binaryDir": "${sourceDir}/build/linux-gcc/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linux-clang-debug",
+      "inherits": "linux-clang",
+      "binaryDir": "${sourceDir}/build/linux-clang/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-clang-release",
+      "inherits": "linux-clang",
+      "binaryDir": "${sourceDir}/build/linux-clang/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
       }
     }
   ]
