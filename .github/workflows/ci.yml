@@ -69,13 +69,12 @@ jobs:
           sudo apt-get install -y ninja-build clang clang-tidy
 
       - name: Configure & Build
-        # Explicitly passing the toolchain here ensures GTest is found for Analysis
         run: |
           cmake -B build -G Ninja \
             -DCMAKE_CXX_COMPILER=clang++ \
             -DENABLE_SANITIZERS=ON \
             -DENABLE_CLANG_TIDY=ON \
-            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
           cmake --build build --parallel
           
       - name: Run Tests
