@@ -13,6 +13,20 @@ project(
     LANGUAGES C CXX
 )
 
+option(ENABLE_CLANG_TIDY "Enable static analysis with clang-tidy" ON)
+
+if(ENABLE_CLANG_TIDY)
+    find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+    if(CLANG_TIDY_EXE)
+        message(STATUS "Clang-Tidy found: ${CLANG_TIDY_EXE}")
+        # CMake 3.7.2+ automatically looks for a .clang-tidy file in the source tree
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+    else()
+        message(AUTHOR_WARNING "Clang-Tidy requested but not found.")
+    endif()
+endif()
+
+
 # Set global C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -70,4 +84,5 @@ message(STATUS " Compiler:     ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VER
 message(STATUS " Build Type:   ${CMAKE_BUILD_TYPE}")
 message(STATUS " Benchmarks:   ${BUILD_BENCHMARKS}")
 message(STATUS " Tests:        ${BUILD_TESTS}")
+message(STATUS " Clang Tidy:   ${ENABLE_CLANG_TIDY}")
 message(STATUS "-----------------------------------------------------------")

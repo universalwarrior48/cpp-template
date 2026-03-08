@@ -4,4 +4,4 @@
 namespace core
 {
 std::string hello();
-}
+} // namespace core
