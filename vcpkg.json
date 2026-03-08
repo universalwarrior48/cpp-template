@@ -1,0 +1,8 @@
+{
+  "name": "elite-cpp-template",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "gtest",
+    "google-benchmark"
+  ]
+}
