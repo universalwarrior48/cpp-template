@@ -59,11 +59,16 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
+          @echo off
           for /f "tokens=1,2,3 delims=-" %%a in ("${{ matrix.preset }}") do (
-            set "BASE_PRESET=%%a-%%b"
-            set "CONFIG=%%c"
+              if "%%c"=="" (
+                  :: Case: msvc-release (2 parts)
+                  call scripts\build.bat %%a %%b
+              ) else (
+                  :: Case: clang-cl-release (3 parts)
+                  call scripts\build.bat %%a-%%b %%c
+              )
           )
-          call scripts\build.bat "%BASE_PRESET%" "%CONFIG%"
 
   # --- Code Quality & Sanitizers ---
   analysis:
