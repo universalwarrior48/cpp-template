@@ -35,14 +35,20 @@ jobs:
         with:
           vcpkgJsonGlob: 'vcpkg.json'
 
-      - name: Install Ninja & Tools (Linux)
+      - name: Install Ninja (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build
 
+      - name: Set up MSVC (Windows)
+        # This is the critical fix for the link.exe error
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
       - name: Configure CMake
-        # Use bash everywhere to keep variable syntax consistent
         shell: bash
         run: |
           cmake --preset ${{ matrix.preset }} \
@@ -50,9 +56,12 @@ jobs:
 
       - name: Build (Linux)
         if: runner.os == 'Linux'
+        shell: bash
         run: |
-          BASE_PRESET=$(echo '${{ matrix.preset }}' | cut -d'-' -f1,2)
-          CONFIG=$(echo '${{ matrix.preset }}' | cut -d'-' -f3)
+          # Split by the last hyphen to handle names like linux-clang-release
+          PRESET="${{ matrix.preset }}"
+          BASE_PRESET="${PRESET%-*}"
+          CONFIG="${PRESET##*-}"
           bash ./scripts/build.sh "$BASE_PRESET" "$CONFIG"
 
       - name: Build (Windows)
@@ -62,15 +71,12 @@ jobs:
           @echo off
           for /f "tokens=1,2,3 delims=-" %%a in ("${{ matrix.preset }}") do (
               if "%%c"=="" (
-                  :: Case: msvc-release (2 parts)
                   call scripts\build.bat %%a %%b
               ) else (
-                  :: Case: clang-cl-release (3 parts)
                   call scripts\build.bat %%a-%%b %%c
               )
           )
 
-  # --- Code Quality & Sanitizers ---
   analysis:
     name: Analysis (Clang-Tidy & ASan)
     runs-on: ubuntu-latest
