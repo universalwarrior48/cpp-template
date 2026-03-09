@@ -1,7 +1,8 @@
-#include <gtest/gtest.h>
 #include "core/hello.hpp"
+#include <gtest/gtest.h>
+#include <string>
 
 TEST(CoreTest, Hello)
 {
-    EXPECT_EQ(core::hello(), "Hello from core library");
+    EXPECT_EQ(core::hello(), std::string("Hello from core library"));
 }

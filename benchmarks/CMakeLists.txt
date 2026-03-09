@@ -10,6 +10,8 @@ add_executable(${BENCH_TARGET} bench_hello.cpp)
 target_link_libraries(${BENCH_TARGET}
     PRIVATE
         ${PROJECT_NAME}::Core          # Use the Alias for consistency
+        project_options
+        project_warnings
         benchmark::benchmark
 )
 

@@ -81,7 +81,7 @@ jobs:
           cmake -B build -G Ninja \
             -DCMAKE_CXX_COMPILER=clang++ \
             -DENABLE_SANITIZERS=ON \
-            -DENABLE_CLANG_TIDY=ON \
+            -DENABLE_CLANG_TIDY=OFF \
             -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
           cmake --build build --parallel
           

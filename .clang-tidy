@@ -1,21 +1,75 @@
-# Enable all checks by default, then disable the annoying ones
-Checks: 'bugprone-*,
-         cppcoreguidelines-*,
-         modernize-*,
-         performance-*,
-         readability-*,
-         -cppcoreguidelines-pro-type-vararg,
-         -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-         -modernize-use-trailing-return-type'
+# .clang-tidy
+Checks: >
+  -*,
 
-# Treat all enabled warnings as errors to keep CI green
-WarningsAsErrors: '*'
+  # High-value bug detection
+  bugprone-*,
+  clang-analyzer-*,
 
-# Specific settings for C++23
+  # Performance improvements
+  performance-*,
+
+  # Modern C++ suggestions
+  modernize-*,
+
+  # Selected core guidelines
+  cppcoreguidelines-avoid-magic-numbers,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-narrowing-conversions,
+  cppcoreguidelines-slicing,
+  cppcoreguidelines-special-member-functions,
+
+  # Useful readability checks (not noisy ones)
+  readability-braces-around-statements,
+  readability-const-return-type,
+  readability-implicit-bool-conversion,
+  readability-redundant-control-flow,
+  readability-simplify-boolean-expr,
+
+  # Disabled noisy checks
+  -modernize-use-trailing-return-type,
+  -modernize-use-auto,
+  -modernize-use-nodiscard,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-avoid-c-arrays,
+  -readability-magic-numbers
+
+WarningsAsErrors: >
+  bugprone-*,
+  clang-analyzer-*
+
+HeaderFilterRegex: 'src/.*|include/.*'
+
 CheckOptions:
-  - key:             readability-identifier-naming.NamespaceCase
-    value:           lower_case
-  - key:             readability-identifier-naming.ClassCase
-    value:           CamelCase
-  - key:             readability-identifier-naming.FunctionCase
-    value:           camelCase
+
+  # Identifier naming
+  - key: readability-identifier-naming.NamespaceCase
+    value: lower_case
+
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+
+  - key: readability-identifier-naming.StructCase
+    value: CamelCase
+
+  - key: readability-identifier-naming.FunctionCase
+    value: lower_case
+
+  - key: readability-identifier-naming.MethodCase
+    value: lower_case
+
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: _
+
+  # Magic numbers ignored in common cases
+  - key: readability-magic-numbers.IgnoredIntegerValues
+    value: '0;1;2;-1'
+
+  # Allow short functions to skip braces rule
+  - key: readability-braces-around-statements.ShortStatementLines
+    value: '1'

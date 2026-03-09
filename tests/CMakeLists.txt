@@ -10,6 +10,9 @@ add_executable(${TEST_TARGET} test_hello.cpp)
 target_link_libraries(${TEST_TARGET}
     PRIVATE
         ${PROJECT_NAME}::Core  # <--- Project-agnostic Alias
+        project_options
+        project_warnings
+        project_sanitizers
         GTest::gtest_main
 )
 
@@ -32,6 +35,3 @@ gtest_discover_tests(${TEST_TARGET}
     ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${TEST_TARGET}>;$ENV{PATH}"
     EXTRA_ARGS --gtest_color=yes
 )
-
-# 6. Apply Template Warnings
-set_project_warnings(${TEST_TARGET})

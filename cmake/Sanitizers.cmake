@@ -1,15 +1,20 @@
-option(ENABLE_SANITIZERS "Enable sanitizers" OFF)
+include_guard(GLOBAL)
 
-if(ENABLE_SANITIZERS AND NOT MSVC)
+add_library(project_sanitizers INTERFACE)
 
-add_compile_options(
-    -fsanitize=address
-    -fsanitize=undefined
-)
+option(ENABLE_ADDRESS_SANITIZER "Enable ASan" OFF)
+option(ENABLE_UNDEFINED_SANITIZER "Enable UBSan" OFF)
 
-add_link_options(
-    -fsanitize=address
-    -fsanitize=undefined
-)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+
+    if(ENABLE_ADDRESS_SANITIZER)
+        target_compile_options(project_sanitizers INTERFACE -fsanitize=address)
+        target_link_options(project_sanitizers INTERFACE -fsanitize=address)
+    endif()
+
+    if(ENABLE_UNDEFINED_SANITIZER)
+        target_compile_options(project_sanitizers INTERFACE -fsanitize=undefined)
+        target_link_options(project_sanitizers INTERFACE -fsanitize=undefined)
+    endif()
 
 endif()
