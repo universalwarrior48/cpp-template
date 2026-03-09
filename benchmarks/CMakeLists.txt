@@ -10,6 +10,8 @@ add_executable(${BENCH_TARGET} bench_hello.cpp)
 target_link_libraries(${BENCH_TARGET}
     PRIVATE
         ${PROJECT_NAME}::Core          # Use the Alias for consistency
+        project_options
+        project_warnings
         benchmark::benchmark
 )
 
@@ -21,3 +23,8 @@ set_target_properties(${BENCH_TARGET} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin"
     OUTPUT_NAME "bench"
 )
+
+# 5. Auto-format before build (if enabled)
+if(DEFINED AUTO_FORMAT_DEP)
+    add_dependencies(${BENCH_TARGET} ${AUTO_FORMAT_DEP})
+endif()

@@ -10,6 +10,9 @@ add_executable(${TEST_TARGET} test_hello.cpp)
 target_link_libraries(${TEST_TARGET}
     PRIVATE
         ${PROJECT_NAME}::Core  # <--- Project-agnostic Alias
+        project_options
+        project_warnings
+        project_sanitizers
         GTest::gtest_main
 )
 
@@ -33,5 +36,7 @@ gtest_discover_tests(${TEST_TARGET}
     EXTRA_ARGS --gtest_color=yes
 )
 
-# 6. Apply Template Warnings
-set_project_warnings(${TEST_TARGET})
+# 6. Auto-format before build (if enabled)
+if(DEFINED AUTO_FORMAT_DEP)
+    add_dependencies(${TEST_TARGET} ${AUTO_FORMAT_DEP})
+endif()

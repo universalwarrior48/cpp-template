@@ -1,11 +1,10 @@
-#include "core/hello.hpp"
+#include <core/hello.hpp>
+#include <string>
 
-namespace core
-{
+namespace core {
 
-std::string hello()
-{
+std::string hello() {
     return "Hello from core library";
 }
 
-}
+} // namespace core

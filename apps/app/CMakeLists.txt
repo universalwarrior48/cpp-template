@@ -8,7 +8,14 @@ add_executable(${APP_TARGET} main.cpp)
 target_link_libraries(${APP_TARGET}
     PRIVATE
         ${PROJECT_NAME}::Core
+        project_options
+        project_warnings
+        project_sanitizers
 )
+
+if(COMMAND enable_clang_tidy)
+    enable_clang_tidy(${MY_LIB_NAME})
+endif()
 
 # 4. Enforce the "Flat Binary" Output Contract
 set_target_properties(${APP_TARGET} PROPERTIES 
@@ -19,5 +26,10 @@ set_target_properties(${APP_TARGET} PROPERTIES
     OUTPUT_NAME "app"
 )
 
-# 5. Apply your template's strict warning configuration
-set_project_warnings(${APP_TARGET})
+# 5. Auto-format before build (if enabled)
+if(DEFINED AUTO_FORMAT_DEP)
+    add_dependencies(${APP_TARGET} ${AUTO_FORMAT_DEP})
+endif()
+
+# 6. Apply your template's strict warning configuration
+#set_project_warnings(${APP_TARGET})

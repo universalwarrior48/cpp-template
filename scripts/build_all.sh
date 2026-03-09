@@ -16,6 +16,9 @@ fi
 # 2. Define the Matrix
 CONFIGS=("Debug" "Release")
 
+# Auto-format support (pass as argument, e.g., ./build_all.sh ON)
+AUTO_FORMAT="${1:-OFF}"
+
 if [ "$IS_MSYS" = true ]; then
     PRESETS=("mingw-gcc" "mingw-clang")
 else
@@ -36,7 +39,7 @@ for preset in "${PRESETS[@]}"; do
         echo "⚒️  Building Node: $preset | $config"
         
         # Use SCRIPT_DIR to find build.sh reliably
-        bash "$SCRIPT_DIR/build.sh" "$preset" "$config"
+        bash "$SCRIPT_DIR/build.sh" "$preset" "$config" "$AUTO_FORMAT"
         
         echo "✅ Finished: $preset-$config"
     done
