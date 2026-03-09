@@ -41,9 +41,6 @@
         "CMAKE_CXX_COMPILER": "clang-cl",
         "CMAKE_LINKER": "lld-link.exe",
         "CMAKE_AR": "llvm-lib.exe"
-      },
-      "environment": {
-        "PATH": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/Llvm/x64/bin;$penv{PATH}"
       }
     },
     {
