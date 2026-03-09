@@ -39,7 +39,7 @@
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-cl",
         "CMAKE_CXX_COMPILER": "clang-cl",
-        "CMAKE_LINKER": "link.exe",
+        "CMAKE_LINKER": "lld-link.exe",
         "CMAKE_AR": "llvm-lib.exe"
       },
       "environment": {
@@ -86,7 +86,10 @@
     },
     {
       "name": "msvc-release",
-      "inherits": ["msvc-base", "benchmark-base"],
+      "inherits": [
+        "msvc-base",
+        "benchmark-base"
+      ],
       "binaryDir": "${sourceDir}/build/msvc/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -102,7 +105,10 @@
     },
     {
       "name": "clang-cl-release",
-      "inherits": ["clang-cl-base", "benchmark-base"],
+      "inherits": [
+        "clang-cl-base",
+        "benchmark-base"
+      ],
       "binaryDir": "${sourceDir}/build/clang-cl/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -118,7 +124,10 @@
     },
     {
       "name": "mingw-gcc-release",
-      "inherits": ["mingw-gcc", "benchmark-base"],
+      "inherits": [
+        "mingw-gcc",
+        "benchmark-base"
+      ],
       "binaryDir": "${sourceDir}/build/mingw-gcc/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -134,7 +143,10 @@
     },
     {
       "name": "mingw-clang-release",
-      "inherits": ["mingw-clang", "benchmark-base"],
+      "inherits": [
+        "mingw-clang",
+        "benchmark-base"
+      ],
       "binaryDir": "${sourceDir}/build/mingw-clang/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -150,7 +162,10 @@
     },
     {
       "name": "linux-gcc-release",
-      "inherits": ["linux-gcc", "benchmark-base"],
+      "inherits": [
+        "linux-gcc",
+        "benchmark-base"
+      ],
       "binaryDir": "${sourceDir}/build/linux-gcc/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
@@ -166,7 +181,10 @@
     },
     {
       "name": "linux-clang-release",
-      "inherits": ["linux-clang", "benchmark-base"],
+      "inherits": [
+        "linux-clang",
+        "benchmark-base"
+      ],
       "binaryDir": "${sourceDir}/build/linux-clang/release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"

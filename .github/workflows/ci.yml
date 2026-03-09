@@ -30,6 +30,12 @@ jobs:
         with:
           submodules: true
 
+      - name: Set up MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
         with:
@@ -40,13 +46,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build
-
-      - name: Set up MSVC (Windows)
-        # This is the critical fix for the link.exe error
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: x64
 
       - name: Configure CMake
         shell: bash
