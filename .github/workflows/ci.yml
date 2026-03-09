@@ -53,10 +53,11 @@ jobs:
         run: |
           BASE_PRESET=$(echo '${{ matrix.preset }}' | cut -d'-' -f1,2)
           CONFIG=$(echo '${{ matrix.preset }}' | cut -d'-' -f3)
-          ./scripts/build.sh "$BASE_PRESET" "$CONFIG"
+          bash ./scripts/build.sh "$BASE_PRESET" "$CONFIG"
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
+        shell: cmd
         run: |
           for /f "tokens=1,2,3 delims=-" %%a in ("${{ matrix.preset }}") do (
             set "BASE_PRESET=%%a-%%b"
