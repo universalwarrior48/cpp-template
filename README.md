@@ -3,16 +3,14 @@
 
 ![CI Status](https://github.com/universalwarrior48/cpp-template/actions/workflows/ci.yml/badge.svg)
 
-A high-performance C++23 template for Windows (MSVC), WSL2 (GCC/Clang), and MSYS2.
-
-A production-ready C++23 template featuring modern CMake, strict compiler enforcement, and a cross-platform matrix (Windows, UCRT64, WSL2).
+A production-ready C++20 template for Windows (MSVC/Clang-CL), Linux (GCC/Clang), and MSYS2 (MinGW).
 
 ## ✨ Key Features
-- **C++23 Standard**: Native support for the latest language features.
-- **Triple-Environment**: Standardized builds for MSVC/Clang-cl, MSYS2/UCRT64, and Lean WSL2.
-- **Automated Matrix**: `build_all` scripts testing 8 distinct configurations.
-- **Performance First**: Google Benchmark integrated into the Release cycle.
-- **Strict Quality**: Custom modules for Warnings, Sanitizers, and Clang-Tidy.
+- **C++20 Standard**: Modern C++ with modules, concepts, and ranges support.
+- **Multi-Compiler Support**: MSVC, Clang-CL, MinGW GCC, MinGW Clang, Linux GCC, Linux Clang.
+- **CMake Presets**: Standardized builds across all compilers and configurations.
+- **Testing & Benchmarking**: Google Test for unit tests, Google Benchmark for performance.
+- **Quality Tools**: Clang-Tidy static analysis, sanitizer support (ASan/UBSan), clang-format.
 
 ## 📁 Project Structure
 ```
@@ -23,7 +21,9 @@ A production-ready C++23 template featuring modern CMake, strict compiler enforc
 ├── benchmarks/         # Google Benchmark suite
 ├── cmake/              # Modules: CompilerWarnings, Sanitizers, StaticAnalyzers
 ├── scripts/            # Build automation (build.bat, build.sh, build_all.*)
-└── vcpkg.json          # Dependency manifest mode
+├── .github/workflows/  # CI/CD pipeline
+├── CMakePresets.json   # CMake presets for all compilers
+└── vcpkg.json          # Dependency manifest (Windows)
 ```
 
 ## 🛠 Prerequisites
@@ -58,29 +58,39 @@ sudo apt update && sudo apt install -y --no-install-recommends \
 
 ## ⚡ Build System
 
-### Standard Build (Individual)
+### Using CMake Presets (Recommended)
+
+```bash
+# Configure with preset
+cmake --preset msvc-release    # Windows MSVC
+cmake --preset linux-gcc-debug # Linux/WSL
+
+# Build
+cmake --build build/msvc/release
+
+# Test
+ctest --test-dir build/msvc/release --output-on-failure
+```
+
+### Using Build Scripts
 
 ```powershell
 .\scripts\build.bat msvc Release    # Windows
-./scripts/build.sh linux-gcc Debug  # WSL/Linux
-
+./scripts/build.sh linux-gcc Debug  # Linux/WSL/MSYS2
 ```
 
-### Master Build (The Matrix)
-
-Runs all 4 compiler configurations (Debug + Release) in one go.
+### Master Build (All Configurations)
 
 ```powershell
-.\scripts\build_all.bat   # Windows Native
-./scripts/build_all.sh    # UCRT64 or WSL
-
+.\scripts\build_all.bat   # Windows
+./scripts/build_all.sh    # Linux/WSL/MSYS2
 ```
 
 ## 📈 Benchmarking & Testing
 
-* **Unit Tests**: Run on every build via `ctest`.
-* **Benchmarks**: Automatically execute in **Release** mode only.
-* **Output**: Binaries land in `build/<preset>/bin/` for easy script access.
+* **Unit Tests**: Run via `ctest --test-dir <build-dir>`
+* **Benchmarks**: Automatically execute in **Release** mode when using build scripts
+* **Output**: Binaries land in `build/<preset>/<config>/bin/`
 
 ## 🧹 Maintenance
 

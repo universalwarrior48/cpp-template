@@ -7,6 +7,9 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
 jobs:
   job:
     name: ${{ matrix.preset }}
@@ -40,6 +43,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgJsonGlob: 'vcpkg.json'
+          runVcpkgInstall: true
 
       - name: Install Ninja (Linux)
         if: runner.os == 'Linux'
@@ -53,7 +57,7 @@ jobs:
           cmake --preset ${{ matrix.preset }} \
             -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 
-      - name: Build (Linux)
+      - name: Build & Test (Linux)
         if: runner.os == 'Linux'
         shell: bash
         run: |
@@ -63,7 +67,7 @@ jobs:
           CONFIG="${PRESET##*-}"
           bash ./scripts/build.sh "$BASE_PRESET" "$CONFIG"
 
-      - name: Build (Windows)
+      - name: Build & Test (Windows)
         if: runner.os == 'Windows'
         shell: cmd
         run: |
@@ -75,6 +79,25 @@ jobs:
                   call scripts\build.bat %%a-%%b %%c
               )
           )
+
+      - name: Set Artifact Path
+        shell: bash
+        run: |
+          # Robust splitting for both 'msvc-release' and 'clang-cl-release'
+          PRESET="${{ matrix.preset }}"
+          echo "COMPILER_NAME=${PRESET%-*}" >> $GITHUB_ENV
+          echo "CONFIG_NAME=${PRESET##*-}" >> $GITHUB_ENV
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.preset }}-binaries
+          # We target the /bin folder specifically, plus any loose DLLs/EXEs
+          path: |
+            build/${{ env.COMPILER_NAME }}/${{ env.CONFIG_NAME }}/bin/
+            build/${{ env.COMPILER_NAME }}/${{ env.CONFIG_NAME }}/*.exe
+            build/${{ env.COMPILER_NAME }}/${{ env.CONFIG_NAME }}/*.dll
+          if-no-files-found: warn
 
   analysis:
     name: Analysis (Clang-Tidy & ASan)
