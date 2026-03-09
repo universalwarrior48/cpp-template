@@ -22,6 +22,11 @@ target_include_directories(${MY_LIB_NAME}
         $<INSTALL_INTERFACE:include>
 )
 
+# --- Auto-format before build (if enabled) ---
+if(DEFINED AUTO_FORMAT_DEP)
+    add_dependencies(${MY_LIB_NAME} ${AUTO_FORMAT_DEP})
+endif()
+
 # --- Compiler Tooling ---
 # Assuming your include(CompilerWarnings) defines this function
 #set_project_warnings(${MY_LIB_NAME})

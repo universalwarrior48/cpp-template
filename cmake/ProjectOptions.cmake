@@ -3,15 +3,18 @@ include_guard(GLOBAL)
 option(BUILD_BENCHMARKS  "Build performance benchmarks" OFF)
 option(BUILD_TESTS       "Build unit tests" ON)
 option(BUILD_SHARED_LIBS "Build libraries as shared" OFF)
-option(ENABLE_CLANG_TIDY "Enable clang-tidy static analysis" ON)
-option(ENABLE_IPO "Enable Interprocedural Optimization" ON)
+option(ENABLE_CLANG_TIDY "Enable clang-tidy static analysis" OFF)
+option(ENABLE_IPO "Enable Interprocedural Optimization (LTO)" OFF)
 option(ENABLE_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
-option(ENABLE_SANITIZERS "Enable sanitizers" OFF)
+option(ENABLE_SANITIZERS "Enable sanitizers (ASan/UBSan)" OFF)
 
 add_library(project_options INTERFACE)
 
 # Require modern C++
 target_compile_features(project_options INTERFACE cxx_std_20)
+
+# Allow users to opt-in to C++23 features if desired
+# target_compile_features(project_options INTERFACE cxx_std_23)
 
 # LTO / IPO
 include(CheckIPOSupported)

@@ -9,12 +9,12 @@ set(MY_LIB_NAME "${MY_PROJECT_NAME}Core")
 project(
     ${MY_PROJECT_NAME}
     VERSION 1.0.0
-    DESCRIPTION "Universal C++23 Template"
+    DESCRIPTION "Universal C++20 Template"
     LANGUAGES C CXX
 )
 
 # Set global C++ standard
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -35,7 +35,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 # Include Professional Tooling Modules
 include(ProjectOptions)     # Global options and feature toggles
 include(ProjectWarnings)    # Sets strict warnings per compiler
-#include(CompilerWarnings)  # Sets strict warnings per compiler
 include(StaticAnalyzers)    # Configures Clang-Tidy/IWYU
 include(Sanitizers)         # Configures ASan/UBSan
 include(ClangFormat)        # Configures clang-format targets

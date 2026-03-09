@@ -26,5 +26,10 @@ set_target_properties(${APP_TARGET} PROPERTIES
     OUTPUT_NAME "app"
 )
 
-# 5. Apply your template's strict warning configuration
+# 5. Auto-format before build (if enabled)
+if(DEFINED AUTO_FORMAT_DEP)
+    add_dependencies(${APP_TARGET} ${AUTO_FORMAT_DEP})
+endif()
+
+# 6. Apply your template's strict warning configuration
 #set_project_warnings(${APP_TARGET})

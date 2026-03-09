@@ -8,8 +8,15 @@ if /i "%~2"=="Release" set "CONFIG=Release"
 set "BASE_PRESET=msvc"
 if not "%~1"=="" set "BASE_PRESET=%~1"
 
+:: Enable auto-format if requested (3rd argument)
+set "AUTO_FORMAT=OFF"
+if /i "%~3"=="ON" set "AUTO_FORMAT=ON"
+
+:: Only msvc and clang-cl are supported in this script (native Windows tools)
+:: For mingw presets, use ucrt64 shell environment
 if /i "%BASE_PRESET%" neq "msvc" if /i "%BASE_PRESET%" neq "clang-cl" (
     echo [ERROR] "%BASE_PRESET%" is not a native Windows preset.
+    echo Use ucrt64 shell for mingw-gcc/mingw-clang presets.
     exit /b 1
 )
 
@@ -45,7 +52,7 @@ echo [BUILD] %TARGET_PRESET% ^(%CONFIG%^)
 echo ──────────────────────────────────────────────
 
 :: Using the 'Flat Binary' contract for the bench check
-cmake --preset "%TARGET_PRESET%" || exit /b !ERRORLEVEL!
+cmake --preset "%TARGET_PRESET%" -DENABLE_AUTO_FORMAT=%AUTO_FORMAT% || exit /b !ERRORLEVEL!
 cmake --build "%BUILD_DIR%" --config %CONFIG% --parallel || exit /b !ERRORLEVEL!
 ctest --test-dir "%BUILD_DIR%" -C %CONFIG% --output-on-failure
 

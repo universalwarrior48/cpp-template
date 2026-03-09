@@ -11,6 +11,7 @@ fi
 
 BASE_PRESET="${1:-$DEFAULT_PRESET}"
 CONFIG="${2:-Debug}"
+AUTO_FORMAT="${3:-OFF}"
 
 # Normalize to lowercase for directory and preset matching
 CONFIG_LOWER=$(echo "$CONFIG" | tr '[:upper:]' '[:lower:]')
@@ -39,7 +40,7 @@ echo "────────────────────────�
 
 # 3. Configure
 echo "[STEP 1/3] Configuring preset: $TARGET_PRESET"
-cmake --preset "$TARGET_PRESET"
+cmake --preset "$TARGET_PRESET" -DENABLE_AUTO_FORMAT=$AUTO_FORMAT
 
 # 4. Build
 echo "[STEP 2/3] Building $CONFIG..."

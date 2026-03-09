@@ -1,6 +1,6 @@
 include_guard(GLOBAL)
 
-#option(ENABLE_CLANG_TIDY "Enable clang-tidy" OFF)
+# Note: ENABLE_CLANG_TIDY option is defined in ProjectOptions.cmake
 
 function(enable_clang_tidy target)
 

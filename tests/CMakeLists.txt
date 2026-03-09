@@ -35,3 +35,8 @@ gtest_discover_tests(${TEST_TARGET}
     ENVIRONMENT "PATH=$<TARGET_FILE_DIR:${TEST_TARGET}>;$ENV{PATH}"
     EXTRA_ARGS --gtest_color=yes
 )
+
+# 6. Auto-format before build (if enabled)
+if(DEFINED AUTO_FORMAT_DEP)
+    add_dependencies(${TEST_TARGET} ${AUTO_FORMAT_DEP})
+endif()
