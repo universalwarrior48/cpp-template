@@ -48,14 +48,21 @@ jobs:
           cmake --preset ${{ matrix.preset }} \
             -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
 
-      - name: Build
-        # Adding shell: bash here ensures the environment remains consistent
-        shell: bash
-        run: cmake --build --preset ${{ matrix.preset }} --parallel
+      - name: Build (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          BASE_PRESET=$(echo '${{ matrix.preset }}' | cut -d'-' -f1,2)
+          CONFIG=$(echo '${{ matrix.preset }}' | cut -d'-' -f3)
+          ./scripts/build.sh "$BASE_PRESET" "$CONFIG"
 
-      - name: Test
-        shell: bash
-        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          for /f "tokens=1,2,3 delims=-" %%a in ("${{ matrix.preset }}") do (
+            set "BASE_PRESET=%%a-%%b"
+            set "CONFIG=%%c"
+          )
+          call scripts\build.bat "%BASE_PRESET%" "%CONFIG%"
 
   # --- Code Quality & Sanitizers ---
   analysis:
